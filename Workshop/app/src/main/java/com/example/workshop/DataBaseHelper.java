@@ -14,6 +14,47 @@ import java.util.HashMap;
  * Created by Anurag on 12-02-2018.
  */
 
+//public class DataBaseHelper extends SQLiteOpenHelper{
+//
+//   private static final String DB= "NOTES";
+//   private static final String user_info="USER_INFO";
+//   private static final String notes_list="NOTES_LIST";
+//
+//
+//    public DataBaseHelper(Context context) {
+//        super(context, DB, null, 1);
+//    }
+//
+//    @Override
+//    public void onCreate(SQLiteDatabase sqLiteDatabase) {
+//        String CREATE_USER_INFO="CREATE TABLE "+user_info+" ( NAME TEXT, EMAIL TEXT);";
+//        String CREATE_NOTES_LIST="CREATE TABLE "+notes_list+" ( NAME NOTE);";
+//        sqLiteDatabase.execSQL(CREATE_USER_INFO);
+//        sqLiteDatabase.execSQL(CREATE_NOTES_LIST);
+//    }
+//
+//    @Override
+//    public void onUpgrade(SQLiteDatabase sqLiteDatabase, int i, int i1) {
+//          sqLiteDatabase.execSQL("DROP TABLE IF EXISTS "+user_info);
+//          sqLiteDatabase.execSQL("DROP TABLE IF EXISTS "+notes_list);
+//          onCreate(sqLiteDatabase);
+//    }
+//
+//    public void AddUser(String name, String email){
+//        String Add_user= " INSERT INTO "+user_info+" VALUES ( '"+name+"','"+email+"');";
+//        SQLiteDatabase db= this.getWritableDatabase();
+//        db.execSQL(Add_user);
+//    }
+//
+//    public Cursor getUserInfo(){
+//     HashMap<String, String > user= new HashMap<>();
+//      String query= "SELECT * FROM "+user_info;
+//      SQLiteDatabase db = this.getReadableDatabase();
+//      Cursor cr = db.rawQuery(query,null);
+//      return cr;
+//    }
+//}
+
 public class DataBaseHelper extends SQLiteOpenHelper {
     private static final String user_table="USER_INFO";
     private static final String note_table="NOTE_LIST";
@@ -27,7 +68,7 @@ public class DataBaseHelper extends SQLiteOpenHelper {
     @Override
     public void onCreate(SQLiteDatabase sqLiteDatabase) {
         String CREATE_USER_TABLE="CREATE TABLE "+user_table+" ( NAME TEXT, EMAIL TEXT);";
-        String CREATE_TODO_TABLE="CREATE TABLE "+note_table+" ( ID TEXT , NOTE TEXT);";
+        String CREATE_TODO_TABLE="CREATE TABLE "+note_table+" ( NOTE TEXT);";
         sqLiteDatabase.execSQL(CREATE_USER_TABLE);
         sqLiteDatabase.execSQL(CREATE_TODO_TABLE);
     }
@@ -39,11 +80,10 @@ public class DataBaseHelper extends SQLiteOpenHelper {
         onCreate(sqLiteDatabase);
     }
 
-    public void AddNote(int id, String note)
+    public void AddNote( String note)
     {
-        String Id= Integer.toString(id);
         SQLiteDatabase db =this.getWritableDatabase();
-        String INSERT_NOTE="INSERT INTO "+note_table+" VALUES ( '"+Id+"','"+note+"' );";
+        String INSERT_NOTE="INSERT INTO "+note_table+" VALUES ( '"+note+"' );";
         db.execSQL(INSERT_NOTE);
     }
 
@@ -54,17 +94,11 @@ public class DataBaseHelper extends SQLiteOpenHelper {
         db.execSQL(INSERT_USER);
     }
 
-    public HashMap<String, String> getUserInfo()
-    {
-        HashMap<String, String > values= new HashMap<>();
-        SQLiteDatabase db= this.getReadableDatabase();
-        String query= "SELECT * FROM "+user_table+";";
-        Cursor cr= db.rawQuery(query,null);
-        cr.moveToFirst();
-        values.put("name",cr.getString(0));
-        values.put("email",cr.getString(1));
-        cr.close();
-        return values;
+    public Cursor getUserInfo(){
+      String query= "SELECT * FROM "+user_table;
+      SQLiteDatabase db = this.getReadableDatabase();
+      Cursor cr = db.rawQuery(query,null);
+      return cr;
     }
 
     public int getNoteCount()
@@ -84,11 +118,10 @@ public class DataBaseHelper extends SQLiteOpenHelper {
         ArrayList<String> notes= new ArrayList<>();
         cr.moveToFirst();
        if(cr.getCount()>0) {
-           notes.add(cr.getString(1));
+           notes.add(cr.getString(0));
 
            while (cr.moveToNext()) {
-               notes.add(cr.getString(1));
-
+               notes.add(cr.getString(0));
            }
        }
         return notes;

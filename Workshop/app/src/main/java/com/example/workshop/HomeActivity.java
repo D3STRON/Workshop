@@ -1,6 +1,7 @@
 package com.example.workshop;
 
 import android.content.Intent;
+import android.database.Cursor;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.MotionEvent;
@@ -30,15 +31,12 @@ public class HomeActivity extends AppCompatActivity {
         fname=(TextView)findViewById(R.id.fname);
         dataBaseHelper= new DataBaseHelper(this);
 
-        HashMap<String, String> user=dataBaseHelper.getUserInfo();
-        if(getIntent().getBooleanExtra("EXIT",false))
-        {
-            finish();
-        }
-        else if(!user.isEmpty())
+        Cursor cr=dataBaseHelper.getUserInfo();
+         if(cr.getCount()>0)
          {
              Intent intent = new Intent(HomeActivity.this, MainActivity.class);
              startActivity(intent);
+             finish();
          }
 
         firstname.setOnTouchListener(new View.OnTouchListener() {
